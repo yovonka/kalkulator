@@ -166,7 +166,7 @@ public class Kalkulator implements ActionListener{
 				
 			}
 		}
-		else if(i==15){
+		else if(cKey[i]==Color.GREEN){
 			
 			if(plus) {
 				numer2 = Long.parseLong(sEkran);
