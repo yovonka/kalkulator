@@ -11,10 +11,10 @@ import javax.swing.JTextField;
 
 public class Kalkulator {
 
+	private static final int _MAX_LENGTH = 16;
+
 	public static void main(String[] args) {
 		Kalkulator k = new Kalkulator();
-		System.out.println(k.usunNiepotrzebneZera("3.0"));
-
 	}
 	
 String sEkran =null;
@@ -24,58 +24,69 @@ Buttons[] numButtons = new NumericButton[10];
 Buttons[] calButtons = new ComputeButton[6];
 	
 	
-JFrame okno = new JFrame("Niezawodny kalkulator");
+JFrame okno = new JFrame("Kalkulator");
 JTextField text = new JTextField(sEkran);
 JButton[] bKey = new JButton [16];
 Font font = new Font ("System",Font.BOLD,15);
 	
-double whatWas;
-double whatIs;
+double recentValue;
+double currentValue;
 String znak=null;
+
+Kalkulator(){
 	
+	setGuiInterface();
+	createObjButton();
+		
+}
 	
-	Kalkulator(){
-		
-		for(byte i=0;i<16;i++) {
-			bKey[i]=new JButton(sKey[i]);
-			okno.add(bKey[i]);
-		}
-		
-		byte index = 0;
-		for(byte y=0; y<4;y++) {
-			for(byte x=0;x<4;x++) {
-				bKey[index].setBounds(10+(x*50),55+(y*50),45,45);
-				bKey[index].setFont(font);	
-				index++;
-			}
-			
-		}
-		
-		int j = 0, k = 0;
-		for(byte i = 0;i<16;i++) {
-			if((i%4==3)||i>12) {
-				calButtons[j]=new ComputeButton(sKey[i],bKey[i]);
-				j++;
-			}
-			else {
-				numButtons[k]=new NumericButton(sKey[i],bKey[i]);
-				k++;
-			}
-		}	
-			
-		text.setBounds(10, 10, 195, 35);
-		text.setFont(new Font("System",Font.BOLD,20));
-		text.setEditable(false);
-		text.setHorizontalAlignment(JTextField.RIGHT);
-		
-		okno.add(text);
-		okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		okno.setSize(220, 285);
-		okno.setLocationRelativeTo(null); // at center
-		okno.setResizable(false);
-		okno.setLayout(null);
-		okno.setVisible(true); 
+void setGuiInterface() {
+	
+	for(byte i=0;i<16;i++) {
+		bKey[i]=new JButton(sKey[i]);
+		okno.add(bKey[i]);
 	}
+	
+	byte index = 0;
+	for(byte y=0; y<4;y++) {
+		for(byte x=0;x<4;x++) {
+			bKey[index].setBounds(10+(x*50),55+(y*50),45,45);
+			bKey[index].setFont(font);	
+			index++;
+		}
+		
+	}
+	text.setBounds(10, 10, 195, 35);
+	text.setFont(new Font("System",Font.BOLD,20));
+	text.setEditable(false);
+	text.setHorizontalAlignment(JTextField.RIGHT);
+	
+	okno.add(text);
+	okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	okno.setSize(220, 285);
+	okno.setLocationRelativeTo(null); // at center
+	okno.setResizable(false);
+	okno.setLayout(null);
+	okno.setVisible(true); 
+	
+}
+	
+void createObjButton() {
+	
+	int j = 0, k = 0;
+	for(byte i = 0;i<16;i++) {
+		if((i%4==3)||i>12) {
+			calButtons[j]=new ComputeButton(sKey[i],bKey[i]);
+			j++;
+		}
+		else {
+			numButtons[k]=new NumericButton(sKey[i],bKey[i]);
+			k++;
+		}
+	}	
+}
+
+
 	
 class NumericButton implements Buttons, ActionListener{
 		
@@ -96,7 +107,7 @@ class NumericButton implements Buttons, ActionListener{
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			addNumber(sKey);
+			addDigitToScreen(sKey);
 			}
 }
 
@@ -126,13 +137,14 @@ class ComputeButton implements Buttons, ActionListener{
 			}
 }
 
-	private void addNumber(String sKey) {
+	private void addDigitToScreen(String buttonValue) {
 		if(sEkran!=null&&sEkran.length()<16) 
-			 sEkran+=sKey;
-			else  sEkran=sKey;
+			 sEkran+=buttonValue;
 		
+		else sEkran=buttonValue;	
 		text.setText(sEkran);
 	}
+	
 
 	void setZnak(String sKey) {
 		if(sKey=="C") {
@@ -142,11 +154,11 @@ class ComputeButton implements Buttons, ActionListener{
 		}
 		else if(sKey=="=") {
 			if(znak!=null&&sEkran!=null) {
-				whatIs=Double.parseDouble(sEkran);
+				currentValue=Double.parseDouble(sEkran);
 				oblicz();
-				text.setText(usunNiepotrzebneZera(sEkran));
+				text.setText(clearUnneededSigns(sEkran));
 				znak=null;
-				whatWas=Double.parseDouble(sEkran);
+				recentValue=Double.parseDouble(sEkran);
 				sEkran=null;
 			}
 		}
@@ -154,11 +166,11 @@ class ComputeButton implements Buttons, ActionListener{
 		 if(sEkran!=null) {
 			
 			if(znak!=null) {
-				whatIs=Double.parseDouble(sEkran);
+				currentValue=Double.parseDouble(sEkran);
 				oblicz();
-				text.setText(usunNiepotrzebneZera(sEkran));
+				text.setText(clearUnneededSigns(sEkran));
 			}
-			whatWas=Double.parseDouble(sEkran);
+			recentValue=Double.parseDouble(sEkran);
 			sEkran=null;
 		 }
 		znak=sKey;
@@ -168,39 +180,39 @@ class ComputeButton implements Buttons, ActionListener{
 	 void oblicz() {  
 		 switch(znak){
 			 case "+":{
-				 whatWas+=whatIs; break;
+				 recentValue+=currentValue; break;
 			 }
 			 case "-" :{
-				 whatWas-=whatIs; break;
+				 recentValue-=currentValue; break;
 			 }
 			 case "/" : {
-				 whatWas=whatWas/whatIs; break;
+				 recentValue=recentValue/currentValue; break;
 			 }
 			 case "*" : {
-				 whatWas*=whatIs; break;
+				 recentValue*=currentValue; break;
 			 }	 
 		 }
-		 sEkran = zaokraglij(String.valueOf(whatWas)); 
+		 //czy warunek if nie lepiej w tej metodzie
+		 sEkran = cutShortValueLength(String.valueOf(recentValue)); 
 	 }
-	String zaokraglij(String x) {
-		if(x.length()>16)
+	String cutShortValueLength(String checkedValue) {
+		if(checkedValue.length()>_MAX_LENGTH)
 		{
-			int i =Integer.parseInt(x.substring(16,17));
+			int valueOfLastIndex =Integer.parseInt(checkedValue.substring(_MAX_LENGTH+1,_MAX_LENGTH+2));
 			
-			if(i>=5) x=x.substring(0, 15)+String.valueOf(Integer.parseInt(x.substring(15,16))+1);
-			
-			else x=x.substring(0, 16);
+			if(valueOfLastIndex>=5) checkedValue=checkedValue.substring(0, _MAX_LENGTH-1)+String.valueOf(Integer.parseInt(checkedValue.substring(_MAX_LENGTH-1,_MAX_LENGTH))+1);	
+			else checkedValue=checkedValue.substring(0, _MAX_LENGTH);
 		}
-		return x;
+		return checkedValue;
 	}	
 	
-	String usunNiepotrzebneZera(String x) {
-		int i = x.length();
-		while((x.contains(".")) && (x.charAt(i-1)=='0'||x.charAt(i-1)=='.')){
-				x=x.substring(0, i-1);
-				i = x.length();
+	String clearUnneededSigns(String checkedValue) {
+		int valueLength = checkedValue.length();
+		while((checkedValue.contains(".")) && (checkedValue.charAt(valueLength-1)=='0'||checkedValue.charAt(valueLength-1)=='.')){
+				checkedValue=checkedValue.substring(0, valueLength-1);
+				valueLength = checkedValue.length();
 			}
 		
-		return x;
+		return checkedValue;
 	}	
 }
