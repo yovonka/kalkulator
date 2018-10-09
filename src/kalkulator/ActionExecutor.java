@@ -12,8 +12,8 @@ public class ActionExecutor {
 	public void addDigitToScreen(String buttonValue) {
 		
 		String sEkran = valueContainer.getsEkran();
-		
-		if(sEkran!=null&&sEkran.length()<16) 
+
+        if (sEkran != null && sEkran.length() < 16)
 			 sEkran+=buttonValue;
 		
 		else sEkran=buttonValue;
