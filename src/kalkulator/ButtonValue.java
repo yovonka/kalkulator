@@ -23,19 +23,19 @@ public enum ButtonValue {
     B_EQUALS("=", null);
 
     private String name;
-    private Integer value;
+    private Integer numericValue;
 
     ButtonValue(String name, Integer value) {
         this.name = name;
-        this.value = value;
+        this.numericValue = value;
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getValue() {
-        return value;
+    public Integer getNumericValue() {
+        return numericValue;
     }
 
     public static Optional<ButtonValue> find(String x) {

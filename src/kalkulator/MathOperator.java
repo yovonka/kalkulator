@@ -4,16 +4,10 @@ public class MathOperator {
 
     private static int _MAX_LENGTH = 16;
 
-    private ValueContainer valueContainer;
-
-    public MathOperator(ValueContainer theValueContainer) {
-        valueContainer = theValueContainer;
+    public MathOperator() {
     }
 
-    void calculate(String sign) {
-        double recentValue = valueContainer.getRecentValue();
-        double currentValue = valueContainer.getCurrentValue();
-
+    double calculate(String sign, double recentValue, double currentValue) {
         switch (sign) {
             case "+": {
                 recentValue += currentValue;
@@ -32,16 +26,13 @@ public class MathOperator {
                 break;
             }
         }
-        valueContainer.setRecentValue(recentValue);
-        valueContainer.setsEkran(String.valueOf(recentValue));
-        valueContainer.setText(cutShortValueLength(clearUnneededSigns(valueContainer.getsEkran())));
+        return recentValue;
     }
 
-    //Metoda do refactoryzacji
-    String cutShortValueLength(String checkedValue) {
+    public static String cutShortValueLength(String checkedValue) {
         String prefix = null;
         System.out.println(checkedValue);
-        if (checkedValue.indexOf("E") != -1) {
+        if (checkedValue.contains("E")) {
 
             prefix = checkedValue.substring(checkedValue.indexOf("E"));
             checkedValue = checkedValue.substring(0, checkedValue.indexOf("E"));
@@ -56,10 +47,10 @@ public class MathOperator {
             else checkedValue = checkedValue.substring(0, _MAX_LENGTH + 1);
         }
         if (prefix != null) checkedValue += prefix;
-        return checkedValue;
+        return clearUnneededSigns(checkedValue);
     }
 
-    String clearUnneededSigns(String checkedValue) {
+    public static String clearUnneededSigns(String checkedValue) {
         int valueLength = checkedValue.length();
         while ((checkedValue.contains(".")) && (checkedValue.charAt(valueLength - 1) == '0' || checkedValue.charAt(valueLength - 1) == '.')) {
             checkedValue = checkedValue.substring(0, valueLength - 1);
