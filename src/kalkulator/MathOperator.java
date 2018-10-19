@@ -10,7 +10,6 @@ public class MathOperator {
         valueContainer = theValueContainer;
     }
 
-
     void calculate(String sign) {
         double recentValue = valueContainer.getRecentValue();
         double currentValue = valueContainer.getCurrentValue();
