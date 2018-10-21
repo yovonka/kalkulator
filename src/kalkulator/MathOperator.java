@@ -2,12 +2,13 @@ package kalkulator;
 
 public class MathOperator {
 
-    private static int _MAX_LENGTH = 16;
+    private static int MAX_LENGTH = 16;
 
     public MathOperator() {
     }
 
-    double calculate(String sign, double recentValue, double currentValue) {
+    double calculate(String sign, double recentValue, String value) {
+       double currentValue = Double.parseDouble(value);
         switch (sign) {
             case "+": {
                 recentValue += currentValue;
@@ -36,15 +37,15 @@ public class MathOperator {
 
             prefix = checkedValue.substring(checkedValue.indexOf("E"));
             checkedValue = checkedValue.substring(0, checkedValue.indexOf("E"));
-            _MAX_LENGTH = _MAX_LENGTH - prefix.length();
-            System.out.println(_MAX_LENGTH);
+            MAX_LENGTH = MAX_LENGTH - prefix.length();
+            System.out.println(MAX_LENGTH);
         }
 
-        if (checkedValue.length() > _MAX_LENGTH) {
-            int valueOfLastIndex = Integer.parseInt(checkedValue.substring(_MAX_LENGTH + 1, _MAX_LENGTH + 2));
+        if (checkedValue.length() > MAX_LENGTH) {
+            int valueOfLastIndex = Integer.parseInt(checkedValue.substring(MAX_LENGTH + 1, MAX_LENGTH + 2));
             if (valueOfLastIndex >= 5)
-                checkedValue = checkedValue.substring(0, _MAX_LENGTH) + String.valueOf(Integer.parseInt(checkedValue.substring(_MAX_LENGTH, _MAX_LENGTH + 1)) + 1);
-            else checkedValue = checkedValue.substring(0, _MAX_LENGTH + 1);
+                checkedValue = checkedValue.substring(0, MAX_LENGTH) + String.valueOf(Integer.parseInt(checkedValue.substring(MAX_LENGTH, MAX_LENGTH + 1)) + 1);
+            else checkedValue = checkedValue.substring(0, MAX_LENGTH + 1);
         }
         if (prefix != null) checkedValue += prefix;
         return clearUnneededSigns(checkedValue);

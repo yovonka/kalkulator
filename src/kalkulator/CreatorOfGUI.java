@@ -1,5 +1,10 @@
 package kalkulator;
 
+import kalkulator.button.Button;
+import kalkulator.button.ButtonValue;
+import kalkulator.button.MyButton;
+import kalkulator.button.SignButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.stream.Stream;
@@ -8,30 +13,36 @@ import java.util.stream.Stream;
 public class CreatorOfGUI {
 
     private static final String LABEL = "Kalkulator";
-    private static final int WINDOW_WIDTH = 250;
-    private static final int WINDOW_HEIGHT = 250;
+    private static final int WINDOW_WIDTH = 300;
+    private static final int WINDOW_HEIGHT = 300;
+    private static final JTextField textField = new JTextField("");
+
+    private static final Button[] buttons = {
+            ButtonValue.B_1, ButtonValue.B_2, ButtonValue.B_3, SignButton.B_C,
+            ButtonValue.B_4, ButtonValue.B_5, ButtonValue.B_6, SignButton.B_PLUS,
+            ButtonValue.B_7, ButtonValue.B_8, ButtonValue.B_9, SignButton.B_MINUS,
+            ButtonValue.B_0, SignButton.B_MULTIPLY, SignButton.B_DIVIDE, SignButton.B_EQUALS,
+    };
 
     private JFrame mainFrame = new JFrame(LABEL);
-    private JTextField textField = new JTextField("");
     private Font font = new Font("System", Font.BOLD, 25);
     private MathOperator mathOperator = new MathOperator();
+    private CalculateMemory memory = new CalculateMemory();
     private String sign;
-    private String saved;
-    private double last;
-    private double curr;
+    private String memoryValue;
+    private Double prevValue;
 
     public CreatorOfGUI() {
         setGuiParameters();
     }
 
-     private void setGuiParameters() {
+    private void setGuiParameters() {
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
         mainFrame.setResizable(false);
         mainFrame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         mainFrame.setLocationRelativeTo(null);
-        BorderLayout borderLayout = new BorderLayout();
-        mainFrame.setLayout(borderLayout);
+        mainFrame.setLayout(new BorderLayout());
 
         textField.setFont(font);
         textField.setSize(250, 10);
@@ -46,20 +57,14 @@ public class CreatorOfGUI {
 
     private Container getButtonsPanel() {
         Container buttonsPanel = new Container();
-        buttonsPanel.setLayout(new GridLayout(4, 3, 1, 1));
-
-        Stream.of(ButtonValue.values())
+        buttonsPanel.setLayout(new GridLayout(4, 4, 0, 0));
+        Stream.of(buttons)
                 .forEach(button -> {
-                    JButton but = new JButton(button.getName());
-                    but.setSize(5, 5);
+                    MyButton but = new MyButton(button);
                     but.addActionListener(e -> {
                         String text = ((JButton) e.getSource()).getText();
-                        Integer value = ButtonValue.find(text).map(ButtonValue::getNumericValue).orElse(null);
-                        if (value != null) {
-                            addDigitToScreen(text);
-                        } else {
-                            setSign(text);
-                        }
+                        addDigitToScreen(text);
+                        //TODO second listtener
                     });
                     buttonsPanel.add(but);
                 });
@@ -67,44 +72,37 @@ public class CreatorOfGUI {
     }
 
     private void addDigitToScreen(String buttonValue) {
-        String sEkran = saved;
-        if (sEkran != null && sEkran.length() < 16) {
-            sEkran += buttonValue;
-        } else {
-            sEkran = buttonValue;
-        }
-        System.out.println(sEkran);
-        textField.setText(sEkran);
-        saved = sEkran;
+        memoryValue = (memoryValue != null && memoryValue.length() < 16)
+                ? memoryValue + buttonValue
+                : buttonValue;
+        textField.setText(memoryValue);
     }
-
+//TODO value container
     void setSign(String buttonValue) {
-        System.out.println(sign);
         switch (buttonValue) {
             case "C":
                 sign = null;
-                saved = null;
-                textField.setText(saved);
+                memoryValue = null;
+                prevValue = null;
+                textField.setText(null);
                 break;
             case "=":
-                if (sign != null && saved != null) {
-                    last = mathOperator.calculate(sign, last, Double.parseDouble(saved));
-                    textField.setText(MathOperator.cutShortValueLength(String.valueOf(last)));
+                if (sign != null && memoryValue != null) {
+                    prevValue = mathOperator.calculate(sign, prevValue, memoryValue);
+                    textField.setText(MathOperator.cutShortValueLength(String.valueOf(prevValue)));
                     sign = null;
-                    saved = null;
+                    memoryValue = null;
                 }
                 break;
             default:
-                System.out.println(saved);
-                if (saved != null) {
+                if (memoryValue != null) {
                     if (sign != null) {
-                        last = mathOperator.calculate(sign, last, Double.parseDouble(saved));
-                        saved = String.valueOf(last);
-                        textField.setText(MathOperator.cutShortValueLength(saved));
-                        System.out.println(last);
+                        prevValue = mathOperator.calculate(sign, prevValue, memoryValue);
+                        memoryValue = String.valueOf(prevValue);
+                        textField.setText(MathOperator.cutShortValueLength(memoryValue));
                     }
-                    last = Double.valueOf(saved);
-                    saved = null;
+                    prevValue = Double.valueOf(memoryValue);
+                    memoryValue = null;
                 }
                 sign = buttonValue;
                 break;
