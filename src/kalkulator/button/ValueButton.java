@@ -1,6 +1,6 @@
 package kalkulator.button;
 
-public enum ButtonValue implements Button {
+public enum ValueButton implements Button {
 
     B_1("1", 1),
     B_2("2", 2),
@@ -17,7 +17,7 @@ public enum ButtonValue implements Button {
     private final int numericValue;
 
 
-    ButtonValue(String name, int value) {
+    ValueButton(String name, int value) {
         this.name = name;
         this.numericValue = value;
 
@@ -31,5 +31,11 @@ public enum ButtonValue implements Button {
     public String getName() {
         return name;
     }
+
+    @Override
+    public Boolean isFunctional() {
+        return false;
+    }
+
 
 }

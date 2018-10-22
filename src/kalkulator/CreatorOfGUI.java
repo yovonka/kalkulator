@@ -1,12 +1,13 @@
 package kalkulator;
 
 import kalkulator.button.Button;
-import kalkulator.button.ButtonValue;
 import kalkulator.button.MyButton;
 import kalkulator.button.SignButton;
+import kalkulator.button.ValueButton;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.stream.Stream;
 
 
@@ -18,19 +19,16 @@ public class CreatorOfGUI {
     private static final JTextField textField = new JTextField("");
 
     private static final Button[] buttons = {
-            ButtonValue.B_1, ButtonValue.B_2, ButtonValue.B_3, SignButton.B_C,
-            ButtonValue.B_4, ButtonValue.B_5, ButtonValue.B_6, SignButton.B_PLUS,
-            ButtonValue.B_7, ButtonValue.B_8, ButtonValue.B_9, SignButton.B_MINUS,
-            ButtonValue.B_0, SignButton.B_MULTIPLY, SignButton.B_DIVIDE, SignButton.B_EQUALS,
+            ValueButton.B_1, ValueButton.B_2, ValueButton.B_3, SignButton.B_CLEAR,
+            ValueButton.B_4, ValueButton.B_5, ValueButton.B_6, SignButton.B_ADD,
+            ValueButton.B_7, ValueButton.B_8, ValueButton.B_9, SignButton.B_MINUS,
+            ValueButton.B_0, SignButton.B_MULTIPLY, SignButton.B_DIVIDE, SignButton.B_EQUALS,
     };
 
     private JFrame mainFrame = new JFrame(LABEL);
     private Font font = new Font("System", Font.BOLD, 25);
     private MathOperator mathOperator = new MathOperator();
     private CalculateMemory memory = new CalculateMemory();
-    private String sign;
-    private String memoryValue;
-    private Double prevValue;
 
     public CreatorOfGUI() {
         setGuiParameters();
@@ -61,50 +59,56 @@ public class CreatorOfGUI {
         Stream.of(buttons)
                 .forEach(button -> {
                     MyButton but = new MyButton(button);
-                    but.addActionListener(e -> {
-                        String text = ((JButton) e.getSource()).getText();
-                        addDigitToScreen(text);
-                        //TODO second listtener
-                    });
+                    but.addActionListener(this::doOnClick);
                     buttonsPanel.add(but);
                 });
         return buttonsPanel;
     }
 
-    private void addDigitToScreen(String buttonValue) {
-        memoryValue = (memoryValue != null && memoryValue.length() < 16)
-                ? memoryValue + buttonValue
-                : buttonValue;
-        textField.setText(memoryValue);
+    private void doOnClick(ActionEvent action) {
+        Button button = ((MyButton) action.getSource()).getButtonEnum();
+        if (button.isFunctional()) {
+            setSign((SignButton) button);
+        } else {
+            addDigitToScreen((ValueButton) button);
+        }
     }
-//TODO value container
-    void setSign(String buttonValue) {
+//TODO Math operator in memory
+    private void addDigitToScreen(ValueButton valueButton) {
+        String currentNumber =
+                (memory.hasCurrentValue() && memory.getCurrentValue().length() < 16)
+                ? memory.getCurrentValue() + valueButton.getName()
+                : valueButton.getName();
+        memory.setCurrentValue(currentNumber);
+        textField.setText(currentNumber);
+    }
+
+    private void setSign(SignButton buttonValue) {
         switch (buttonValue) {
-            case "C":
-                sign = null;
-                memoryValue = null;
-                prevValue = null;
+            case B_CLEAR:
+                memory = new CalculateMemory();
                 textField.setText(null);
                 break;
-            case "=":
-                if (sign != null && memoryValue != null) {
-                    prevValue = mathOperator.calculate(sign, prevValue, memoryValue);
-                    textField.setText(MathOperator.cutShortValueLength(String.valueOf(prevValue)));
-                    sign = null;
-                    memoryValue = null;
-                }
+            case B_EQUALS:
+                if (memory.hasSign() && memory.hasCurrentValue()) {
+                    Double calculatedNumber = mathOperator.calculate(memory);
+                    memory.setPrevNumber(calculatedNumber);
+                    memory.resetSign();
+                    memory.resetCurrentValue();
+                    textField.setText(MathOperator.cutShortValueLength(calculatedNumber));
+        }
                 break;
             default:
-                if (memoryValue != null) {
-                    if (sign != null) {
-                        prevValue = mathOperator.calculate(sign, prevValue, memoryValue);
-                        memoryValue = String.valueOf(prevValue);
-                        textField.setText(MathOperator.cutShortValueLength(memoryValue));
+                if (memory.hasCurrentValue()) {
+                    if (memory.hasSign()) {
+                        Double calculatedNumber = mathOperator.calculate(memory);
+                        memory.setCurrentNumber(calculatedNumber);
+                        textField.setText(MathOperator.cutShortValueLength(calculatedNumber));
                     }
-                    prevValue = Double.valueOf(memoryValue);
-                    memoryValue = null;
+                    memory.setPrevNumber(memory.getCurrentNumber());
+                    memory.resetCurrentValue();
                 }
-                sign = buttonValue;
+                memory.setSign(buttonValue);
                 break;
         }
     }

@@ -2,8 +2,8 @@ package kalkulator.button;
 
 public enum SignButton implements Button {
 
-    B_C("C"),
-    B_PLUS("+"),
+    B_CLEAR("C"),
+    B_ADD("+"),
     B_MINUS("-"),
     B_MULTIPLY("*"),
     B_DIVIDE("/"),
@@ -20,4 +20,8 @@ public enum SignButton implements Button {
         return name;
     }
 
+    @Override
+    public Boolean isFunctional() {
+        return true;
+    }
 }

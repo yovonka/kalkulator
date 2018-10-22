@@ -4,4 +4,6 @@ public interface Button {
 
     String getName();
 
+    Boolean isFunctional();
+
 }

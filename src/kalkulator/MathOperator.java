@@ -7,32 +7,29 @@ public class MathOperator {
     public MathOperator() {
     }
 
-    double calculate(String sign, double recentValue, String value) {
-       double currentValue = Double.parseDouble(value);
-        switch (sign) {
-            case "+": {
-                recentValue += currentValue;
-                break;
+    Double calculate(CalculateMemory memory) {
+        switch (memory.getSign()) {
+            case B_ADD: {
+                return memory.getPrevNumber() + memory.getCurrentNumber();
             }
-            case "-": {
-                recentValue -= currentValue;
-                break;
+            case B_MINUS: {
+                return memory.getPrevNumber() - memory.getCurrentNumber();
             }
-            case "/": {
-                recentValue = recentValue / currentValue;
-                break;
+            case B_DIVIDE: {
+                return memory.getPrevNumber() / memory.getCurrentNumber();
             }
-            case "*": {
-                recentValue *= currentValue;
-                break;
+            case B_MULTIPLY: {
+                return memory.getPrevNumber() * memory.getCurrentNumber();
+            }
+            default: {
+                return null;
             }
         }
-        return recentValue;
     }
-
-    public static String cutShortValueLength(String checkedValue) {
+//TODO
+    public static String cutShortValueLength(Double checkedNumber) {
         String prefix = null;
-        System.out.println(checkedValue);
+        String checkedValue = String.valueOf(checkedNumber);
         if (checkedValue.contains("E")) {
 
             prefix = checkedValue.substring(checkedValue.indexOf("E"));
@@ -47,7 +44,9 @@ public class MathOperator {
                 checkedValue = checkedValue.substring(0, MAX_LENGTH) + String.valueOf(Integer.parseInt(checkedValue.substring(MAX_LENGTH, MAX_LENGTH + 1)) + 1);
             else checkedValue = checkedValue.substring(0, MAX_LENGTH + 1);
         }
-        if (prefix != null) checkedValue += prefix;
+        if (prefix != null) {
+            checkedValue += prefix;
+        }
         return clearUnneededSigns(checkedValue);
     }
 
