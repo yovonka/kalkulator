@@ -1,5 +1,7 @@
 package kalkulator.button;
 
+import kalkulator.CalculateMemory;
+
 public enum SignButton implements Button {
 
     B_CLEAR("C"),
@@ -21,7 +23,8 @@ public enum SignButton implements Button {
     }
 
     @Override
-    public Boolean isFunctional() {
-        return true;
+    public void updateMemory(CalculateMemory memory) {
+        memory.addSign(this);
+
     }
 }

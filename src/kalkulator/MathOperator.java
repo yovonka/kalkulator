@@ -7,7 +7,7 @@ public class MathOperator {
     public MathOperator() {
     }
 
-    Double calculate(CalculateMemory memory) {
+    static Double calculate(CalculateMemory memory) {
         switch (memory.getSign()) {
             case B_ADD: {
                 return memory.getPrevNumber() + memory.getCurrentNumber();
@@ -26,7 +26,8 @@ public class MathOperator {
             }
         }
     }
-//TODO
+
+    //TODO
     public static String cutShortValueLength(Double checkedNumber) {
         String prefix = null;
         String checkedValue = String.valueOf(checkedNumber);

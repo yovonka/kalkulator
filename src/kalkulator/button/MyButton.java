@@ -15,7 +15,4 @@ public class MyButton extends JButton {
         return buttonEnum;
     }
 
-    public void setButtonEnum(Button buttonEnum) {
-        this.buttonEnum = buttonEnum;
-    }
 }

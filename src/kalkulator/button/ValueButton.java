@@ -1,5 +1,7 @@
 package kalkulator.button;
 
+import kalkulator.CalculateMemory;
+
 public enum ValueButton implements Button {
 
     B_1("1", 1),
@@ -23,19 +25,14 @@ public enum ValueButton implements Button {
 
     }
 
-    public int getNumericValue() {
-        return numericValue;
-    }
-
     @Override
     public String getName() {
         return name;
     }
 
     @Override
-    public Boolean isFunctional() {
-        return false;
+    public void updateMemory(CalculateMemory memory) {
+        memory.addDigit(name);
     }
-
 
 }

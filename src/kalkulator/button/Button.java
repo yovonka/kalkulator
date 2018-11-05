@@ -1,9 +1,10 @@
 package kalkulator.button;
 
+import kalkulator.CalculateMemory;
+
 public interface Button {
 
     String getName();
 
-    Boolean isFunctional();
-
+    void updateMemory(CalculateMemory memory);
 }
